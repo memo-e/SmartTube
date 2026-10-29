@@ -201,4 +201,58 @@ public class ComplexImageCardView extends ImageCardView {
         super.setMainImageDimensions(width, height);
         mComplexImageView.setMainImageDimensions(width, height);
     }
+        @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        updateCardFocus(selected || isFocused());
+    }
+
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, android.graphics.Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        updateCardFocus(gainFocus || isSelected());
+    }
+
+    private void updateCardFocus(boolean focused) {
+        if (focused) {
+            // Parlamayı sıfırlayan koyu antrasit zemin + 4px canlı altın sarısı çerçeve
+            android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+            gd.setColor(0xFF1E1E1E);
+            gd.setStroke(4, 0xFFFFD700);
+            gd.setCornerRadius(12f);
+            setInfoAreaBackground(gd);
+
+            int titleId = getResources().getIdentifier("title_text", "id", getContext().getPackageName());
+            if (titleId != 0) {
+                android.widget.TextView title = findViewById(titleId);
+                if (title != null) {
+                    title.setTextColor(0xFFFFD700); // Canlı altın sarısı başlık
+                }
+            }
+            int contentId = getResources().getIdentifier("content_text", "id", getContext().getPackageName());
+            if (contentId != 0) {
+                android.widget.TextView content = findViewById(contentId);
+                if (content != null) {
+                    content.setTextColor(0xFFDDDDDD); // Net açık gri alt yazı
+                }
+            }
+        } else {
+            setInfoAreaBackground(null);
+
+            int titleId = getResources().getIdentifier("title_text", "id", getContext().getPackageName());
+            if (titleId != 0) {
+                android.widget.TextView title = findViewById(titleId);
+                if (title != null) {
+                    title.setTextColor(0xFFFFFFFF); // Varsayılan beyaz başlık
+                }
+            }
+            int contentId = getResources().getIdentifier("content_text", "id", getContext().getPackageName());
+            if (contentId != 0) {
+                android.widget.TextView content = findViewById(contentId);
+                if (content != null) {
+                    content.setTextColor(0xFFAAAAAA); // Varsayılan gri alt yazı
+                }
+            }
+        }
+    }
 }
